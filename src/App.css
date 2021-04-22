@@ -133,7 +133,7 @@ input {
   background-color: #fff;
   border-radius: 3px;
   border: 1px solid #ddd;
-  box-shadow: 0 0 29px 5px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 10px 0px rgb(0 0 0 / 20%);
   padding: 20px;
   text-align: left;
 }
@@ -238,7 +238,8 @@ input {
   z-index: 11;
 }
 
-.inform .singleGraficDimms {
+.inform .googlechart {
+  background-color: #fff;
   min-height: 300px;
   min-width: 500px;
 }

@@ -106,7 +106,7 @@ export default function InformPage({ setModalContent }) {
       <div className="inform centered">
         {errorMsg && <div>Se ha producido un error: {errorMsg}</div>}
         {Object.entries(dataArray).map((table) => (
-          <div className="singleGraficDimms centered" key={table}>
+          <div className="googlechart centered" key={table}>
             <Chart
               width={'500px'}
               height={'300px'}
@@ -125,7 +125,7 @@ export default function InformPage({ setModalContent }) {
             />
           </div>
         ))}
-        <div className="singleGraficDimms informTable centered" key="informTable">
+        <div className="googlechart informTable centered" key="informTable">
           <Chart
             chartType="Table"
             data={[
