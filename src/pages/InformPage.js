@@ -1,19 +1,33 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Redirect } from 'react-router';
 import Chart from 'react-google-charts';
-// import { useHistory } from 'react-router';
 
 import { AuthContext } from '../components/providers/AuthProvider.js';
 
-export default function InformPage() {
+const strPad = (text, maxLength, symbol, left = true) => {
+  const repeated = symbol.repeat(maxLength - text.toString().length);
+  return (left ? repeated : '') + text + (!left ? repeated : '');
+};
+
+const spanishMonths = {
+  Jan: 'Enero',
+  Feb: 'Febrero',
+  Mar: 'Marzo',
+  Apr: 'Abril',
+  May: 'Mayo',
+  Jun: 'Junio',
+  Jul: 'Julio',
+  Aug: 'Agosto',
+  Sep: 'Septiembre',
+  Oct: 'Octubre',
+  Nov: 'Noviembre',
+  Dec: 'Diciembre',
+};
+
+export default function InformPage({ setModalContent }) {
   const [user, setUser] = useContext(AuthContext);
-  // eslint-disable-next-line
   const [dataArray, setDataArray] = useState([]);
   const [errorMsg, setErrorMsg] = useState('');
-
-  console.log('Pintando InformPage');
-
-  // const history = useHistory();
 
   useEffect(() => {
     (async () => {
@@ -32,8 +46,6 @@ export default function InformPage() {
           setErrorMsg(`Error!!! ${await loginFetchResponse.text()}`);
         }
 
-        console.log(6666, loginFetch);
-        // const grapfGoogleCharts = [];
         const tablesArray = [];
         const tableAll = [];
         for (const eachTable in loginFetch) {
@@ -44,93 +56,96 @@ export default function InformPage() {
               tableAll[item.Date] = [];
             }
             tableAll[item.Date].push(item.Value);
-            // tablesArray['union'][item.Date]?.push(item.Value);
-
-            // console.log(item);
           }
-          //  loginFetch[eachTable].map(() =>)
-          //   console.log(loginFetch[eachTable]);
-          //   // loginFetch[eachTable];
-          // grapfGoogleCharts.push([loginFetch[eachTable][0].Date]);
         }
-        console.log(7890, tableAll);
-        const tableAll2 = Object.entries(tableAll).map((table) => [new Date(table[0]), ...table[1]]);
-        tablesArray['ALL'] = tableAll2;
+
+        tablesArray['ALL'] = Object.entries(tableAll).map((table) => [new Date(table[0]), ...table[1]]);
 
         setDataArray(tablesArray);
-        console.log(123456, tableAll2);
-        // console.log(grapfGoogleCharts);
-        //const graficArray = loginFetch.map((item) => item)
-        // const pru = Object.entries(loginFetch).map((table) => {
-        //   [new Date(table[1].Date), [...table[1].map((item) => item.Value)]];
-        // });
-        // console.log(pru);
-        // setDataArray(pru);
-        // return () => {
-        //   cleanup
-        // }
       }
     })();
   }, []);
-  console.log(888, dataArray);
-  Object.entries(dataArray).map((table) => {
-    console.log(999, table);
-  });
+
+  useEffect(() => {
+    document.addEventListener('dblclick', (event) => {
+      const eTarget = event.target;
+
+      if (eTarget.matches('.informTable td')) {
+        const tds = [...eTarget.closest('tr').children];
+        const tdDateArray = tds[1].innerText.replace(',', '').split(' ');
+        const tdDate = `${tdDateArray[1]} de ${spanishMonths[tdDateArray[0]]} de ${tdDateArray[2]}`;
+        const tdsArray = tds.slice(2);
+        const valuesArray = tdsArray.map((td) => parseInt(td.innerText));
+        const valuesSum = valuesArray.reduce((acc, number) => (acc += number), 0);
+
+        setModalContent(
+          `<b>${tdDate}</b><br /><br />${strPad('Máximo:', 11, '&nbsp;', false)} ${strPad(
+            Math.max(...valuesArray),
+            5,
+            '&nbsp;'
+          )}<br />${strPad('Mínimo:', 12, '&nbsp;', false)} ${strPad(
+            Math.min(...valuesArray),
+            5,
+            '&nbsp;'
+          )}<br />${strPad('Media:', 11, '&nbsp;', false)} ${strPad(
+            (valuesSum / valuesArray.length).toFixed(2),
+            5,
+            '&nbsp;'
+          )}<br />${strPad('Suma:', 12, '&nbsp;', false)} ${strPad(valuesSum, 5, '&nbsp;')}`
+        );
+      }
+    });
+  }, []);
 
   return (
     <div>
-      <h1>Informe</h1>
       {!user.token && <Redirect to="/" />}
-      {errorMsg && <div>Se ha producido un error: {errorMsg}</div>}
-      {Object.entries(dataArray).map((table) => (
-        <Chart
-          key={table}
-          width={'600px'}
-          height={'400px'}
-          chartType="LineChart"
-          loader={<div>Loading Chart</div>}
-          data={[
-            table[1][0].length === 2
-              ? [{ type: 'date', label: 'Day' }, table[0]]
-              : [{ type: 'date', label: 'Day' }, 'HG', 'HM', 'HR'],
-            ...table[1],
-          ]}
-          options={{
-            hAxis: {
-              title: 'Time',
-            },
-            vAxis: {
-              title: 'Ammount',
-            },
-            curveType: 'function',
-          }}
-          rootProps={{ 'data-testid': '2' }}
-        />
-      ))}
-
-      <Chart
-        width={'500px'}
-        height={'300px'}
-        chartType="Table"
-        loader={<div>Loading Chart</div>}
-        data={[
-          [
-            { type: 'string', label: 'Name' },
-            { type: 'number', label: 'Salary' },
-            { type: 'boolean', label: 'Full Time Employee' },
-          ],
-          ['Mike', { v: 10000, f: '$10,000' }, true],
-          ['Jim', { v: 8000, f: '$8,000' }, false],
-          ['Alice', { v: 12500, f: '$12,500' }, true],
-          ['Bob', { v: 7000, f: '$7,000' }, true],
-        ]}
-        options={{
-          showRowNumber: true,
-        }}
-        rootProps={{ 'data-testid': '1' }}
-      />
-
-      <button onClick={() => setUser({ token: '' })}>Cerrar la sesión</button>
+      <button className="closeSession" onClick={() => setUser({ token: '' })}>
+        Cerrar la sesión
+      </button>
+      <div className="inform centered">
+        {errorMsg && <div>Se ha producido un error: {errorMsg}</div>}
+        {Object.entries(dataArray).map((table) => (
+          <div className="singleGraficDimms centered" key={table}>
+            <Chart
+              width={'500px'}
+              height={'300px'}
+              chartType="LineChart"
+              loader={<div>Loading Chart</div>}
+              data={[
+                table[1][0].length === 2
+                  ? [{ type: 'date', label: 'Day' }, table[0]]
+                  : [{ type: 'date', label: 'Day' }, 'HG', 'HM', 'HR'],
+                ...table[1],
+              ]}
+              options={{
+                curveType: 'function',
+              }}
+              rootProps={{ 'data-testid': '2' }}
+            />
+          </div>
+        ))}
+        <div className="singleGraficDimms informTable centered" key="informTable">
+          <Chart
+            chartType="Table"
+            data={[
+              [
+                { type: 'date', label: 'Date' },
+                { type: 'number', label: 'HG' },
+                { type: 'number', label: 'HM' },
+                { type: 'number', label: 'HR' },
+              ],
+              ...(dataArray['ALL'] || []),
+            ]}
+            loader={<div>Loading Chart</div>}
+            options={{
+              showRowNumber: true,
+            }}
+            rootProps={{ 'data-testid': '1' }}
+          />
+        </div>
+      </div>
+      <p></p>
     </div>
   );
 }

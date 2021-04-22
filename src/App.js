@@ -1,27 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AuthProvider } from './components/providers/AuthProvider.js';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import './App.css';
 import LoginPage from './pages/LoginPage.js';
 import InformPage from './pages/InformPage.js';
+import Modal from './components/Modal.js';
+import Header from './components/Header.js';
+import Footer from './components/Footer.js';
 
 function App() {
+  const [modalContent, setModalContent] = useState('');
+
   return (
     <AuthProvider>
       <Router>
-        <header>
-          <h1>Tecdesoft</h1>
-        </header>
+        <aside className="bg-image"></aside>
+        <Header />
         <main>
           <Switch>
             <Route path="/inform.html">
-              <InformPage />
+              <InformPage setModalContent={setModalContent} />
             </Route>
             <LoginPage />
           </Switch>
         </main>
-        <footer>@ 2021</footer>
+        <Footer />
+        <Modal modalContent={modalContent} setModalContent={setModalContent} />
       </Router>
     </AuthProvider>
   );
