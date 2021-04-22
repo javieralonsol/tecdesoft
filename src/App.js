@@ -1,8 +1,10 @@
-import './App.css';
+import React from 'react';
 import { AuthProvider } from './components/providers/AuthProvider.js';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
+import './App.css';
 import LoginPage from './pages/LoginPage.js';
+import InformPage from './pages/InformPage.js';
 
 function App() {
   return (
@@ -13,8 +15,8 @@ function App() {
         </header>
         <main>
           <Switch>
-            <Route path="/inform">
-              <h1>Inform</h1>
+            <Route path="/inform.html">
+              <InformPage />
             </Route>
             <LoginPage />
           </Switch>
