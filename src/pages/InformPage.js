@@ -30,6 +30,10 @@ export default function InformPage({ setModalContent }) {
   const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
+    if (!user.token) {
+      return <Redirect to="/" />;
+    }
+
     (async () => {
       const loginFetchResponse = await fetch(
         `https://test-api-d93b7-default-rtdb.firebaseio.com/data.json?auth=${user.token}`
@@ -43,7 +47,7 @@ export default function InformPage({ setModalContent }) {
         if (loginFetch.error === 'Auth token is expired') {
           setUser({ token: '' });
         } else if (loginFetchResponse.status !== 200) {
-          setErrorMsg(`Error!!! ${await loginFetchResponse.text()}`);
+          setErrorMsg(`Error!!! ${loginFetch.error}`);
         }
 
         const tablesArray = [];
@@ -104,7 +108,7 @@ export default function InformPage({ setModalContent }) {
         Cerrar la sesión
       </button>
       <div className="inform centered">
-        {errorMsg && <div>Se ha producido un error: {errorMsg}</div>}
+        {errorMsg && <p class="error">&nbsp;Se ha producido un error: {errorMsg}&nbsp;</p>}
         {Object.entries(dataArray).map((table) => (
           <div className="googlechart centered" key={table}>
             <Chart

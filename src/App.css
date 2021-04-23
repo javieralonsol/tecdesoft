@@ -129,6 +129,13 @@ input {
           filter: blur(4px);
 }
 
+.error {
+  background-color: #fdd;
+  border-radius: 3px;
+  color: #f00;
+  text-align: center;
+}
+
 .login form {
   background-color: #fff;
   border-radius: 3px;
@@ -218,13 +225,6 @@ input {
   color: #000;
 }
 
-.login .error {
-  background-color: #fdd;
-  border-radius: 3px;
-  color: #f00;
-  text-align: center;
-}
-
 .inform {
   display: flex;
   flex-wrap: wrap;
@@ -246,7 +246,7 @@ input {
 
 .inform .informTable {
   -webkit-user-select: none;
-     -moz-user-select: none;
+      -moz-user-select: none;
       -ms-user-select: none;
           user-select: none;
 }

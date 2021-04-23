@@ -53,7 +53,7 @@ export default function Login() {
   };
 
   useEffect(() => {
-    setTimeout(() => document.querySelector('#email').focus(), 1000);
+    setTimeout(() => document.querySelector('#email')?.focus(), 1000);
   }, []);
 
   return (

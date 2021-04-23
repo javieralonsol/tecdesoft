@@ -22,7 +22,9 @@ function App() {
             <Route path="/inform.html">
               <InformPage setModalContent={setModalContent} />
             </Route>
-            <LoginPage />
+            <Route>
+              <LoginPage />
+            </Route>
           </Switch>
         </main>
         <Footer />
